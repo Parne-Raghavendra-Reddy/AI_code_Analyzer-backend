@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>History – AI Code Analyzer</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+    <div class="nav-brand">
+        <i class="fas fa-code"></i>
+        <span>AI Code Analyzer</span>
+    </div>
+    <div class="nav-links">
+        <a href="/analyzer.html" class="nav-link"><i class="fas fa-terminal"></i> Analyzer</a>
+        <a href="/history.html" class="nav-link active"><i class="fas fa-history"></i> History</a>
+        <a href="/admin.html" class="nav-link" id="adminLink" style="display:none">
+            <i class="fas fa-shield-alt"></i> Admin
+        </a>
+    </div>
+    <div class="nav-user">
+        <span id="navUsername"><i class="fas fa-user-circle"></i> Loading...</span>
+        <button class="btn btn-sm btn-outline" onclick="logout()">
+            <i class="fas fa-sign-out-alt"></i> Logout
+        </button>
+    </div>
+</nav>
+
+<!-- PAGE CONTENT -->
+<div class="page-container">
+    <div class="page-header">
+        <h2><i class="fas fa-history"></i> My Code History</h2>
+        <p>All your previous code submissions and their analysis results.</p>
+    </div>
+
+    <!-- Loading -->
+    <div id="historyLoading" class="loading-state">
+        <div class="spinner"></div>
+        <p>Loading your history...</p>
+    </div>
+
+    <!-- Empty state -->
+    <div id="historyEmpty" style="display:none" class="empty-state">
+        <div class="empty-icon"><i class="fas fa-inbox"></i></div>
+        <h3>No submissions yet!</h3>
+        <p>Go to the Code Analyzer and submit your first code.</p>
+        <a href="/analyzer.html" class="btn btn-primary">
+            <i class="fas fa-terminal"></i> Start Analyzing
+        </a>
+    </div>
+
+    <!-- History table -->
+    <div id="historyTable" style="display:none">
+        <div class="table-wrapper">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Language</th>
+                        <th>Code Preview</th>
+                        <th>Status</th>
+                        <th>Lines</th>
+                        <th>Submitted</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="historyTableBody"></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL: View full submission details -->
+<div id="submissionModal" class="modal" style="display:none">
+    <div class="modal-overlay" onclick="closeModal()"></div>
+    <div class="modal-content modal-large">
+        <div class="modal-header">
+            <h3><i class="fas fa-file-code"></i> Submission Details</h3>
+            <button class="modal-close" onclick="closeModal()"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="modal-body" id="modalBody">
+            <!-- Dynamic content inserted here -->
+        </div>
+    </div>
+</div>
+
+<script src="/js/history.js"></script>
+</body>
+</html>

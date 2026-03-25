@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard – AI Code Analyzer</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+    <div class="nav-brand">
+        <i class="fas fa-code"></i>
+        <span>AI Code Analyzer</span>
+    </div>
+    <div class="nav-links">
+        <a href="/analyzer.html" class="nav-link"><i class="fas fa-terminal"></i> Analyzer</a>
+        <a href="/history.html" class="nav-link"><i class="fas fa-history"></i> History</a>
+        <a href="/admin.html" class="nav-link active"><i class="fas fa-shield-alt"></i> Admin</a>
+    </div>
+    <div class="nav-user">
+        <span class="badge badge-admin"><i class="fas fa-crown"></i> ADMIN</span>
+        <span id="navUsername"></span>
+        <button class="btn btn-sm btn-outline" onclick="logout()">
+            <i class="fas fa-sign-out-alt"></i> Logout
+        </button>
+    </div>
+</nav>
+
+<!-- ADMIN CONTENT -->
+<div class="page-container">
+    <div class="page-header">
+        <h2><i class="fas fa-chart-line"></i> Admin Dashboard</h2>
+        <p>Monitor all users, submissions, and system analytics.</p>
+    </div>
+
+    <!-- ANALYTICS CARDS -->
+    <div class="analytics-grid" id="analyticsGrid">
+        <div class="analytics-card card-blue">
+            <div class="analytics-icon"><i class="fas fa-users"></i></div>
+            <div class="analytics-info">
+                <div class="analytics-value" id="statUsers">-</div>
+                <div class="analytics-label">Total Users</div>
+            </div>
+        </div>
+        <div class="analytics-card card-green">
+            <div class="analytics-icon"><i class="fas fa-file-code"></i></div>
+            <div class="analytics-info">
+                <div class="analytics-value" id="statSubmissions">-</div>
+                <div class="analytics-label">Total Submissions</div>
+            </div>
+        </div>
+        <div class="analytics-card card-purple">
+            <div class="analytics-icon"><i class="fas fa-check-circle"></i></div>
+            <div class="analytics-info">
+                <div class="analytics-value" id="statSuccess">-</div>
+                <div class="analytics-label">Successful Runs</div>
+            </div>
+        </div>
+        <div class="analytics-card card-red">
+            <div class="analytics-icon"><i class="fas fa-times-circle"></i></div>
+            <div class="analytics-info">
+                <div class="analytics-value" id="statFailed">-</div>
+                <div class="analytics-label">Failed Runs</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- LANGUAGE BREAKDOWN -->
+    <div class="section-card">
+        <h3><i class="fas fa-code-branch"></i> Submissions by Language</h3>
+        <div class="lang-stats">
+            <div class="lang-stat">
+                <span class="lang-badge java">☕ Java</span>
+                <div class="lang-bar-wrapper">
+                    <div class="lang-bar" id="javaBar" style="width:0%"></div>
+                </div>
+                <span id="javaCount" class="lang-count">0</span>
+            </div>
+            <div class="lang-stat">
+                <span class="lang-badge python">🐍 Python</span>
+                <div class="lang-bar-wrapper">
+                    <div class="lang-bar python-bar" id="pythonBar" style="width:0%"></div>
+                </div>
+                <span id="pythonCount" class="lang-count">0</span>
+            </div>
+            <div class="lang-stat">
+                <span class="lang-badge c">⚙️ C</span>
+                <div class="lang-bar-wrapper">
+                    <div class="lang-bar c-bar" id="cBar" style="width:0%"></div>
+                </div>
+                <span id="cCount" class="lang-count">0</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- TABS: Users | Submissions -->
+    <div class="section-card">
+        <div class="admin-tabs">
+            <button class="tab active" onclick="showAdminTab('users')">
+                <i class="fas fa-users"></i> All Users
+            </button>
+            <button class="tab" onclick="showAdminTab('submissions')">
+                <i class="fas fa-file-code"></i> All Submissions
+            </button>
+        </div>
+
+        <!-- USERS TABLE -->
+        <div id="adminTab-users" class="admin-tab-content">
+            <div class="table-wrapper">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Username</th>
+                            <th>Email</th>
+                            <th>Role</th>
+                            <th>Status</th>
+                            <th>Submissions</th>
+                            <th>Joined</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="usersTableBody">
+                        <tr><td colspan="8" class="text-center">Loading...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- SUBMISSIONS TABLE -->
+        <div id="adminTab-submissions" class="admin-tab-content" style="display:none">
+            <div class="table-wrapper">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>User</th>
+                            <th>Language</th>
+                            <th>Status</th>
+                            <th>Lines</th>
+                            <th>Complexity</th>
+                            <th>Submitted</th>
+                            <th>Code Preview</th>
+                        </tr>
+                    </thead>
+                    <tbody id="submissionsTableBody">
+                        <tr><td colspan="8" class="text-center">Loading...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="/js/admin.js"></script>
+</body>
+</html>

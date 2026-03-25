@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>AI Code Analyzer</title>
+    <script>
+        // Redirect to login if not authenticated, else to analyzer
+        const token = localStorage.getItem('authToken');
+        if (token) {
+            window.location.href = '/analyzer.html';
+        } else {
+            window.location.href = '/login.html';
+        }
+    </script>
+</head>
+<body>
+    <p>Redirecting...</p>
+</body>
+</html>

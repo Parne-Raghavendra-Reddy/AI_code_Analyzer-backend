@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Code Analyzer – AI Code Analyzer</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- CodeMirror for syntax highlighting -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/dracula.min.css">
+</head>
+<body>
+
+<!-- TOP NAVIGATION BAR -->
+<nav class="navbar">
+    <div class="nav-brand">
+        <i class="fas fa-code"></i>
+        <span>AI Code Analyzer</span>
+    </div>
+    <div class="nav-links">
+        <a href="/analyzer.html" class="nav-link active"><i class="fas fa-terminal"></i> Analyzer</a>
+        <a href="/history.html" class="nav-link"><i class="fas fa-history"></i> History</a>
+        <a href="/admin.html" class="nav-link admin-only" id="adminLink" style="display:none">
+            <i class="fas fa-shield-alt"></i> Admin
+        </a>
+    </div>
+    <div class="nav-user">
+        <span id="navUsername"><i class="fas fa-user-circle"></i> Loading...</span>
+        <button class="btn btn-sm btn-outline" onclick="logout()">
+            <i class="fas fa-sign-out-alt"></i> Logout
+        </button>
+    </div>
+</nav>
+
+<!-- MAIN CONTENT -->
+<div class="main-container">
+
+    <!-- LEFT PANEL: CODE INPUT -->
+    <div class="panel panel-input">
+        <div class="panel-header">
+            <h3><i class="fas fa-edit"></i> Code Editor</h3>
+            <div class="language-selector">
+                <label>Language:</label>
+                <select id="languageSelect" onchange="onLanguageChange()">
+                    <option value="Java">☕ Java</option>
+                    <option value="Python">🐍 Python</option>
+                    <option value="C">⚙️ C</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Code editor textarea (enhanced by CodeMirror) -->
+        <div class="editor-wrapper">
+            <textarea id="codeEditor" placeholder="// Write your code here..."></textarea>
+        </div>
+
+        <!-- Sample code buttons -->
+        <div class="sample-btns">
+            <span>Load Sample:</span>
+            <button class="btn btn-xs" onclick="loadSample('hello')">Hello World</button>
+            <button class="btn btn-xs" onclick="loadSample('calculator')">Calculator</button>
+            <button class="btn btn-xs" onclick="loadSample('loop')">Loop</button>
+            <button class="btn btn-xs" onclick="loadSample('oop')">OOP</button>
+        </div>
+
+        <!-- Action buttons -->
+        <div class="action-btns">
+            <button class="btn btn-primary btn-lg" id="analyzeBtn" onclick="analyzeCode()">
+                <i class="fas fa-play"></i> Run & Analyze
+            </button>
+            <button class="btn btn-outline" onclick="clearCode()">
+                <i class="fas fa-trash"></i> Clear
+            </button>
+        </div>
+    </div>
+
+    <!-- RIGHT PANEL: RESULTS -->
+    <div class="panel panel-results" id="resultsPanel">
+
+        <!-- Loading state -->
+        <div id="loadingState" style="display:none" class="loading-state">
+            <div class="spinner"></div>
+            <p>Analyzing your code...</p>
+        </div>
+
+        <!-- Welcome message (before first submission) -->
+        <div id="welcomeState" class="welcome-state">
+            <div class="welcome-icon"><i class="fas fa-rocket"></i></div>
+            <h3>Ready to Analyze!</h3>
+            <p>Write or paste code in the editor and click <strong>Run & Analyze</strong></p>
+            <div class="welcome-features">
+                <div class="wf-item"><i class="fas fa-check"></i> Code Execution</div>
+                <div class="wf-item"><i class="fas fa-check"></i> Complexity Analysis</div>
+                <div class="wf-item"><i class="fas fa-check"></i> Beginner Explanation</div>
+                <div class="wf-item"><i class="fas fa-check"></i> AI Assistant</div>
+                <div class="wf-item"><i class="fas fa-check"></i> Video Suggestions</div>
+            </div>
+        </div>
+
+        <!-- Results tabs -->
+        <div id="resultsTabs" style="display:none">
+            <div class="tabs">
+                <button class="tab active" onclick="showResultTab('output')">
+                    <i class="fas fa-terminal"></i> Output
+                </button>
+                <button class="tab" onclick="showResultTab('metrics')">
+                    <i class="fas fa-chart-bar"></i> Metrics
+                </button>
+                <button class="tab" onclick="showResultTab('explanation')">
+                    <i class="fas fa-book-open"></i> Explanation
+                </button>
+                <button class="tab" onclick="showResultTab('workflow')">
+                    <i class="fas fa-project-diagram"></i> Workflow
+                </button>
+                <button class="tab" onclick="showResultTab('ai')">
+                    <i class="fas fa-robot"></i> AI Chat
+                </button>
+                <button class="tab" onclick="showResultTab('videos')">
+                    <i class="fab fa-youtube"></i> Videos
+                </button>
+            </div>
+
+            <!-- OUTPUT TAB -->
+            <div id="tab-output" class="tab-content active">
+                <div id="outputSuccess" class="output-box output-success" style="display:none">
+                    <div class="output-header">
+                        <span class="badge badge-success"><i class="fas fa-check"></i> Execution Successful</span>
+                    </div>
+                    <pre id="outputText" class="output-pre"></pre>
+                </div>
+                <div id="outputError" class="output-box output-error" style="display:none">
+                    <div class="output-header">
+                        <span class="badge badge-error"><i class="fas fa-times"></i> Execution Failed</span>
+                    </div>
+                    <pre id="errorText" class="output-pre"></pre>
+                </div>
+            </div>
+
+            <!-- METRICS TAB -->
+            <div id="tab-metrics" class="tab-content" style="display:none">
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <div class="metric-icon"><i class="fas fa-list-ol"></i></div>
+                        <div class="metric-value" id="metricLines">-</div>
+                        <div class="metric-label">Lines of Code</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-icon"><i class="fas fa-brain"></i></div>
+                        <div class="metric-value" id="metricComplexity">-</div>
+                        <div class="metric-label">Cyclomatic Complexity</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-icon"><i class="fas fa-puzzle-piece"></i></div>
+                        <div class="metric-value" id="metricMethods">-</div>
+                        <div class="metric-label">Methods / Functions</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-icon"><i class="fas fa-box"></i></div>
+                        <div class="metric-value" id="metricVariables">-</div>
+                        <div class="metric-label">Variables</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-icon"><i class="fas fa-hammer"></i></div>
+                        <div class="metric-value" id="metricConstructors">-</div>
+                        <div class="metric-label">Constructors</div>
+                    </div>
+                    <div class="metric-card" id="complexityRating">
+                        <div class="metric-icon"><i class="fas fa-star"></i></div>
+                        <div class="metric-value" id="metricRating">-</div>
+                        <div class="metric-label">Complexity Rating</div>
+                    </div>
+                </div>
+                <div class="complexity-legend">
+                    <h4>Complexity Guide:</h4>
+                    <div class="legend-item"><span class="dot green"></span> 1-5: Simple &amp; Clean</div>
+                    <div class="legend-item"><span class="dot yellow"></span> 6-10: Moderate</div>
+                    <div class="legend-item"><span class="dot red"></span> 11+: Complex, consider simplifying</div>
+                </div>
+            </div>
+
+            <!-- EXPLANATION TAB -->
+            <div id="tab-explanation" class="tab-content" style="display:none">
+                <div class="explanation-box">
+                    <pre id="explanationText" class="explanation-pre"></pre>
+                </div>
+            </div>
+
+            <!-- WORKFLOW TAB -->
+            <div id="tab-workflow" class="tab-content" style="display:none">
+                <div class="explanation-box">
+                    <pre id="workflowText" class="explanation-pre"></pre>
+                </div>
+            </div>
+
+            <!-- AI CHAT TAB -->
+            <div id="tab-ai" class="tab-content" style="display:none">
+                <div class="ai-chat-container">
+                    <div class="ai-header">
+                        <div class="ai-avatar"><i class="fas fa-robot"></i></div>
+                        <div>
+                            <h4>AI Assistant</h4>
+                            <p>Ask me anything about your code!</p>
+                        </div>
+                    </div>
+
+                    <!-- Initial AI explanation -->
+                    <div class="ai-initial-explanation">
+                        <div class="ai-bubble ai-bubble-bot">
+                            <div class="ai-bubble-header"><i class="fas fa-robot"></i> AI Assistant</div>
+                            <div id="aiInitialText" class="ai-bubble-text">Submit your code to get an AI explanation!</div>
+                        </div>
+                    </div>
+
+                    <!-- Chat messages area -->
+                    <div id="chatMessages" class="chat-messages"></div>
+
+                    <!-- Chat input -->
+                    <div class="chat-input-area">
+                        <input type="text" id="chatInput"
+                               placeholder="Ask a question... e.g., 'What does this loop do?'"
+                               onkeypress="if(event.key==='Enter') sendChat()">
+                        <button class="btn btn-primary" onclick="sendChat()">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </div>
+
+                    <div class="quick-questions">
+                        <span>Quick questions:</span>
+                        <button class="btn btn-xs" onclick="askQuick('Explain this code for a complete beginner')">Explain for beginner</button>
+                        <button class="btn btn-xs" onclick="askQuick('What are the errors in this code?')">Find errors</button>
+                        <button class="btn btn-xs" onclick="askQuick('How can I improve this code?')">Improve code</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- VIDEOS TAB -->
+            <div id="tab-videos" class="tab-content" style="display:none">
+                <h4 class="videos-title"><i class="fab fa-youtube"></i> Recommended Learning Videos</h4>
+                <p class="videos-subtitle">Based on concepts detected in your code</p>
+                <div id="videosList" class="videos-grid"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- CodeMirror JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/clike/clike.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/python/python.min.js"></script>
+
+<script src="/js/analyzer.js"></script>
+</body>
+</html>
