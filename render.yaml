@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: ai-code-analyzer-backend
+    env: docker
+    region: ohio
+    branch: main
+    envVars:
+      - key: PORT
+        value: 8090
+      - key: DB_URL
+        value: jdbc:postgresql://dpg-d778ou1r0fns73f0v8eg-a:5432/ai_code_analyzer_db
+      - key: DB_USERNAME
+        value: ai_code_analyzer_db_user
+      - key: DB_PASSWORD
+        value: GBZSnYItxDYHwTIwxNu3Zdu3sfJwwgfF
