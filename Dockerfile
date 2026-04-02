@@ -11,8 +11,8 @@ RUN mvn dependency:go-offline -B
 COPY src ./src
 RUN mvn clean package -DskipTests
 
-# Stage 2: Create a minimal runtime image
-FROM eclipse-temurin:17-jre
+# Stage 2: Create a minimal runtime image (must use JDK to run javac)
+FROM eclipse-temurin:17-jdk
 WORKDIR /app
 
 # Copy the built jar from the build stage (the wildcard handles the jar versioning name)
